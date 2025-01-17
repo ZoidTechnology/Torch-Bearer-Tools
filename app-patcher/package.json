@@ -1,0 +1,11 @@
+{
+	"type": "module",
+	"dependencies": {
+		"diff": "^7.0.0",
+		"prettier": "^3.4.2"
+	},
+	"scripts": {
+		"assemble": "node source assemble",
+		"create-patches": "node source create-patches"
+	}
+}

@@ -1,1 +1,4 @@
-__pycache__
+/app-patcher/data
+/app-patcher/flameeye.apk
+/app-patcher/node_modules
+/interface/__pycache__
