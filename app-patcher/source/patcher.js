@@ -1,28 +1,36 @@
 import { applyPatch, structuredPatch } from 'diff';
 import { cp, readdir, readFile, writeFile } from 'fs/promises';
-import { join, relative } from 'path';
-import { format } from 'prettier';
+import { extname, join, relative } from 'path';
+import { format, getSupportInfo } from 'prettier';
 
 export async function applyPatches(patches, formatConfig, sourceBasePath, destinationBasePath) {
 	await cp(sourceBasePath, destinationBasePath, { recursive: true });
 
 	for (const patch of patches) {
-		const sourceFilePath = join(sourceBasePath, patch.path);
-		const sourceFile = await readFile(sourceFilePath, 'utf-8');
-		const formattedFile = await format(sourceFile, { ...formatConfig, filepath: patch.path });
-		const patchedFile = applyPatch(formattedFile, patch);
+		let data;
 
-		if (patchedFile === false) {
-			throw new Error('Failed to patch file: ' + patch.path);
+		if (Array.isArray(patch.data)) {
+			const sourceFilePath = join(sourceBasePath, patch.path);
+			const sourceFile = await readFile(sourceFilePath, 'utf-8');
+			const formattedFile = await format(sourceFile, { ...formatConfig, filepath: patch.path });
+			data = applyPatch(formattedFile, { hunks: patch.data });
+
+			if (data === false) {
+				throw new Error('Failed to patch file: ' + patch.path);
+			}
+
+			await writeFile(sourceFilePath, formattedFile);
+		} else {
+			data = Buffer.from(patch.data, 'base64');
 		}
 
-		await writeFile(sourceFilePath, formattedFile);
-		await writeFile(join(destinationBasePath, patch.path), patchedFile);
+		await writeFile(join(destinationBasePath, patch.path), data);
 	}
 }
 
 export async function createPatches(sourceBasePath, destinationBasePath) {
 	const entries = await readdir(sourceBasePath, { recursive: true, withFileTypes: true });
+	const textFileExtensions = (await getSupportInfo()).languages.map((language) => language.extensions).flat();
 	const patches = [];
 
 	for (const entry of entries) {
@@ -41,19 +49,27 @@ export async function createPatches(sourceBasePath, destinationBasePath) {
 			continue;
 		}
 
-		const hunks = structuredPatch(
-			undefined,
-			undefined,
-			sourceFile.toString('utf-8'),
-			destinationFile.toString('utf-8'),
-			undefined,
-			undefined,
-			{ stripTrailingCr: true }
-		).hunks;
+		let data;
 
-		if (hunks.length) {
-			patches.push({ path: relativeFilePath.replaceAll('\\', '/'), hunks });
+		if (textFileExtensions.includes(extname(relativeFilePath))) {
+			data = structuredPatch(
+				undefined,
+				undefined,
+				sourceFile.toString('utf-8'),
+				destinationFile.toString('utf-8'),
+				undefined,
+				undefined,
+				{ stripTrailingCr: true }
+			).hunks;
+
+			if (data.length === 0) {
+				continue;
+			}
+		} else {
+			data = destinationFile.toString('base64');
 		}
+
+		patches.push({ path: relativeFilePath.replaceAll('\\', '/'), data });
 	}
 
 	return patches.sort((first, second) => first.path.localeCompare(second.path));
