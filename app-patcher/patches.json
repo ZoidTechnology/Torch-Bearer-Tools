@@ -1,0 +1,103 @@
+[
+	{
+		"path": "assets/apps/__UNI__AC0AA31/www/app-service.js",
+		"data": [
+			{
+				"oldStart": 38597,
+				"oldLines": 9,
+				"newStart": 38597,
+				"newLines": 9,
+				"lines": [
+					" \t\t\t\t\t(t.hasCie2015 = function (e) {",
+					" \t\t\t\t\t\treturn E(e).includes('CIE2015');",
+					" \t\t\t\t\t}),",
+					" \t\t\t\t\t(t.hasExtraFunc = function (e) {",
+					"-\t\t\t\t\t\treturn !!e && !e.startsWith('Y');",
+					"+\t\t\t\t\t\treturn !!e;",
+					" \t\t\t\t\t}),",
+					" \t\t\t\t\t(t.hasFlicker = function (e) {",
+					" \t\t\t\t\t\treturn E(e).includes('FLICKER');",
+					" \t\t\t\t\t}),"
+				]
+			},
+			{
+				"oldStart": 40872,
+				"oldLines": 29,
+				"newStart": 40872,
+				"newLines": 27,
+				"lines": [
+					" \t\t\t\t\t\t\t},",
+					" \t\t\t\t\t\t\tselectMenus: function () {",
+					" \t\t\t\t\t\t\t\tvar t = this;",
+					" \t\t\t\t\t\t\t\te('log', this.model, this.model.startsWith('Y'), ' at pages/index/index.vue:359'),",
+					"-\t\t\t\t\t\t\t\t\tthis.model && this.model.startsWith('Y')",
+					"-\t\t\t\t\t\t\t\t\t\t? t.doNavigate(0)",
+					"-\t\t\t\t\t\t\t\t\t\t: uni.showActionSheet({",
+					"-\t\t\t\t\t\t\t\t\t\t\t\titemList: [",
+					"-\t\t\t\t\t\t\t\t\t\t\t\t\tthis.$t('product.standard-measurement'),",
+					"-\t\t\t\t\t\t\t\t\t\t\t\t\tthis.$t('product.comparative-measurement'),",
+					"-\t\t\t\t\t\t\t\t\t\t\t\t\tthis.$t('product.reflection-measuremen'),",
+					"-\t\t\t\t\t\t\t\t\t\t\t\t\tthis.$t('product.transmission-measurement')",
+					"-\t\t\t\t\t\t\t\t\t\t\t\t],",
+					"-\t\t\t\t\t\t\t\t\t\t\t\tsuccess: function (r) {",
+					"-\t\t\t\t\t\t\t\t\t\t\t\t\tt.doNavigate(r.tapIndex),",
+					"-\t\t\t\t\t\t\t\t\t\t\t\t\t\te(",
+					"-\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t'log',",
+					"-\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t'\\u9009\\u4e2d\\u4e86\\u7b2c' + (r.tapIndex + 1) + '\\u4e2a\\u6309\\u94ae',",
+					"-\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t' at pages/index/index.vue:373'",
+					"-\t\t\t\t\t\t\t\t\t\t\t\t\t\t);",
+					"-\t\t\t\t\t\t\t\t\t\t\t\t},",
+					"-\t\t\t\t\t\t\t\t\t\t\t\tfail: function (t) {",
+					"-\t\t\t\t\t\t\t\t\t\t\t\t\te('log', t.errMsg, ' at pages/index/index.vue:376');",
+					"-\t\t\t\t\t\t\t\t\t\t\t\t}",
+					"-\t\t\t\t\t\t\t\t\t\t\t});",
+					"+\t\t\t\t\t\t\t\t\tuni.showActionSheet({",
+					"+\t\t\t\t\t\t\t\t\t\titemList: [",
+					"+\t\t\t\t\t\t\t\t\t\t\tthis.$t('product.standard-measurement'),",
+					"+\t\t\t\t\t\t\t\t\t\t\tthis.$t('product.comparative-measurement'),",
+					"+\t\t\t\t\t\t\t\t\t\t\tthis.$t('product.reflection-measuremen'),",
+					"+\t\t\t\t\t\t\t\t\t\t\tthis.$t('product.transmission-measurement')",
+					"+\t\t\t\t\t\t\t\t\t\t],",
+					"+\t\t\t\t\t\t\t\t\t\tsuccess: function (r) {",
+					"+\t\t\t\t\t\t\t\t\t\t\tt.doNavigate(r.tapIndex),",
+					"+\t\t\t\t\t\t\t\t\t\t\t\te(",
+					"+\t\t\t\t\t\t\t\t\t\t\t\t\t'log',",
+					"+\t\t\t\t\t\t\t\t\t\t\t\t\t'\\u9009\\u4e2d\\u4e86\\u7b2c' + (r.tapIndex + 1) + '\\u4e2a\\u6309\\u94ae',",
+					"+\t\t\t\t\t\t\t\t\t\t\t\t\t' at pages/index/index.vue:373'",
+					"+\t\t\t\t\t\t\t\t\t\t\t\t);",
+					"+\t\t\t\t\t\t\t\t\t\t},",
+					"+\t\t\t\t\t\t\t\t\t\tfail: function (t) {",
+					"+\t\t\t\t\t\t\t\t\t\t\te('log', t.errMsg, ' at pages/index/index.vue:376');",
+					"+\t\t\t\t\t\t\t\t\t\t}",
+					"+\t\t\t\t\t\t\t\t\t});",
+					" \t\t\t\t\t\t\t},",
+					" \t\t\t\t\t\t\tcheckIsSuccessConnected: function () {",
+					" \t\t\t\t\t\t\t\treturn (",
+					" \t\t\t\t\t\t\t\t\te('log', this.model, this.beginWl, this.endWl, ' at pages/index/index.vue:381'),"
+				]
+			},
+			{
+				"oldStart": 178204,
+				"oldLines": 11,
+				"newStart": 178202,
+				"newLines": 11,
+				"lines": [
+					" \t\t\t\t\t{ model: 'B32B4W08034CTPD', modules: ['SPEC_V2', 'PPFD'] },",
+					" \t\t\t\t\t{ model: 'B32B4T08034CTPD', modules: ['SPEC_V2', 'PPFD', 'TM30'] },",
+					" \t\t\t\t\t{ model: 'P32B4I10234CTPD', modules: ['SPEC_V2', 'IR', 'CIE2015'] },",
+					" \t\t\t\t\t{ model: 'B32B4K10234CTPD', modules: ['SPEC_V2', 'BL', 'IR', 'PPFD', 'TM30', 'CIE2015'] },",
+					"-\t\t\t\t\t{ model: 'Y21B7W10034NMPD', modules: ['SPEC_V2_Y', 'BL_Y', 'PPFD_Y'] },",
+					"-\t\t\t\t\t{ model: 'Y21B7W10034CCPD', modules: ['SPEC_V2_Y', 'BL_Y', 'PPFD_Y'] },",
+					"-\t\t\t\t\t{ model: 'Y32B7W10034CCPD', modules: ['SPEC_V2_Y', 'BL_Y', 'PPFD_Y'] },",
+					"+\t\t\t\t\t{ model: 'Y21B7W10034NMPD', modules: ['SPEC_V2', 'BL', 'IR', 'PPFD', 'TM30'] },",
+					"+\t\t\t\t\t{ model: 'Y21B7W10034CCPD', modules: ['SPEC_V2', 'BL', 'IR', 'PPFD', 'TM30'] },",
+					"+\t\t\t\t\t{ model: 'Y32B7W10034CCPD', modules: ['SPEC_V2', 'BL', 'IR', 'PPFD', 'TM30'] },",
+					" \t\t\t\t\t{ model: 'B43B4F10234CBPD', modules: ['SPEC_V2', 'BL', 'IR', 'PPFD', 'TM30', 'CIE2015', 'FLICKER'] },",
+					" \t\t\t\t\t{ model: 'B43B4F10735CBPD', modules: ['SPEC_V2', 'BL', 'IR', 'PPFD', 'TM30', 'CIE2015', 'FLICKER'] },",
+					" \t\t\t\t\t{ model: 'DEFAULT', modules: ['SPEC_V2'] }",
+					" \t\t\t\t]"
+				]
+			}
+		]
+	}
+]
