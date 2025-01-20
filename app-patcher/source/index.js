@@ -124,7 +124,7 @@ try {
 		const patches = await createPatches(DISASSEMBLED_PATH, PATCHED_PATH);
 
 		console.log('Saving patches...');
-		writeFileSync(PATCHES_PATH, JSON.stringify(patches, null, '\t'));
+		writeFileSync(PATCHES_PATH, JSON.stringify(patches, null, '\t') + '\n');
 	} else {
 		exit('Unknown action: ' + action);
 	}
