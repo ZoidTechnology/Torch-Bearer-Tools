@@ -3,9 +3,29 @@
 		"path": "assets/apps/__UNI__AC0AA31/www/app-service.js",
 		"data": [
 			{
+				"oldStart": 15703,
+				"oldLines": 9,
+				"newStart": 15703,
+				"newLines": 11,
+				"lines": [
+					" \t\t\t\t\t\tn('div', { staticClass: e._$s(2, 'sc', 'about'), attrs: { _i: 2 } }, [",
+					" \t\t\t\t\t\t\tn('p'),",
+					" \t\t\t\t\t\t\tn('p', [e._v(e._$s(4, 't0-0', e._s(e.$t('about.company'))))]),",
+					" \t\t\t\t\t\t\tn('p'),",
+					"-\t\t\t\t\t\t\tn('p', [e._v(e._$s(6, 't0-0', e._s(e.$t('about.version'))) + e._$s(6, 't0-1', e._s(e.version)))]),",
+					"+\t\t\t\t\t\t\tn('p', [",
+					"+\t\t\t\t\t\t\t\te._v(e._$s(6, 't0-0', e._s(e.$t('about.version'))) + e._$s(6, 't0-1', e._s(e.version + ' Patch:0.1')))",
+					"+\t\t\t\t\t\t\t]),",
+					" \t\t\t\t\t\t\tn('p'),",
+					" \t\t\t\t\t\t\tn(",
+					" \t\t\t\t\t\t\t\t'a',",
+					" \t\t\t\t\t\t\t\t{"
+				]
+			},
+			{
 				"oldStart": 38597,
 				"oldLines": 9,
-				"newStart": 38597,
+				"newStart": 38599,
 				"newLines": 9,
 				"lines": [
 					" \t\t\t\t\t(t.hasCie2015 = function (e) {",
@@ -23,7 +43,7 @@
 			{
 				"oldStart": 40872,
 				"oldLines": 29,
-				"newStart": 40872,
+				"newStart": 40874,
 				"newLines": 27,
 				"lines": [
 					" \t\t\t\t\t\t\t},",
@@ -79,7 +99,7 @@
 			{
 				"oldStart": 178204,
 				"oldLines": 11,
-				"newStart": 178202,
+				"newStart": 178204,
 				"newLines": 11,
 				"lines": [
 					" \t\t\t\t\t{ model: 'B32B4W08034CTPD', modules: ['SPEC_V2', 'PPFD'] },",
