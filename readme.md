@@ -13,7 +13,7 @@ A tool for modifying the official [Flameeye Android app](https://play.google.com
 
 ### Usage
 
-- Download Flameeye version 1.6.3 to the app-patcher directory and rename it `flameeye.apk`.
+- Download Flameeye version 1.6.4 to the app-patcher directory and rename it `flameeye.apk`.
 - Enter the app-patcher directory and use `npm install` to install dependencies.
 - Use `npm run assemble` to assemble and sign a patched app.
 - Use `npm run create-patches` to create patches from modified files.
