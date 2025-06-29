@@ -1,6 +1,7 @@
 import atexit
 import colour
 import numpy as np
+from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 import queue
 import signal
 import sys
@@ -25,6 +26,8 @@ class RefreshableSpectralPlot:
         self.last_mouse_pos = None  # Store last mouse position
         self.cursor_visible = False  # Track cursor visibility state
         self.refresh_func = refresh_func
+        self.refresh_paused = False
+        self.pause_button = None # to be able to change the label
 
     def start_plot(self):
         # Create initial plot in main thread
@@ -33,6 +36,8 @@ class RefreshableSpectralPlot:
         plt.ion()
         plt.show(block=False)
         self.fig.canvas.draw()
+
+        self._add_pause_button()
 
         # Start background data generation
         self.running = True
@@ -63,11 +68,24 @@ class RefreshableSpectralPlot:
         finally:
             self.stop()
 
+    def _pause_refresh(self):
+        if self.refresh_paused:
+            self.refresh_paused = False
+            if self.pause_button:
+                self.pause_button.config(text="||")
+        else:
+            self.refresh_paused = True
+            if self.pause_button:
+                self.pause_button.config(text="|>")
+
+
     def _data_loop(self):
         """Background thread that generates new data"""
         while self.running:
             try:
                 time.sleep(self.update_interval)
+                if self.refresh_paused:
+                    continue
                 new_data = self.refresh_func() if self.refresh_func else None
                 if new_data is not None:
                     self.update_queue.put(new_data)
@@ -93,6 +111,25 @@ class RefreshableSpectralPlot:
         except Exception as e:
             if self.running:  # Only print if we're not shutting down
                 print(f"Plot update error: {e}")
+
+    def _add_pause_button(self):
+        if self.fig and hasattr(self.fig.canvas, 'toolbar') and self.fig.canvas.toolbar:
+            try:
+                toolbar = self.fig.canvas.toolbar
+                if hasattr(toolbar, 'master'):  # Tkinter backend
+                    import tkinter as tk
+                    # Add separator
+                    separator = tk.Frame(toolbar, width=2, bd=1, relief=tk.SUNKEN)
+                    separator.pack(side=tk.LEFT, fill=tk.Y, padx=5, pady=2)
+
+                    label = "|>" if self.refresh_paused else "||"
+                    self.pause_button = tk.Button(toolbar, text=label, command=self._pause_refresh)
+                    self.pause_button.pack(side=tk.LEFT, padx=2)
+
+            except Exception as e:
+                # Ignore toolbar setup errors
+                if self.running:
+                    print(f"Toolbar setup error: {e}")
 
     def _setup_cursor(self):
         """Setup cursor tracking"""
