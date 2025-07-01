@@ -7,9 +7,47 @@ import signal
 import sys
 import threading
 import time
+import warnings
 from protocol import *
 from serial import Serial
 from matplotlib import pyplot as plt
+import os
+from matplotlib.backend_tools import ToolBase, ToolToggleBase
+from matplotlib.backend_tools import default_toolbar_tools
+
+# Remove most tools by default (ouch)
+default_toolbar_tools.clear()
+default_toolbar_tools.append(['global', ['save']])
+
+class PowerTool(ToolBase):
+    description = 'Quit application'
+
+    def __init__(self, *args, plot, **kwargs):
+        self.plot = plot
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        self.image = os.path.join(script_dir, "power")
+        super().__init__(*args, **kwargs)
+
+    def trigger(self, *args, **kwargs):
+        self.plot.stop()
+
+
+class PauseTool(ToolToggleBase):
+    description = 'Pause/Resume refreshing'
+
+    def __init__(self, *args, plot, **kwargs):
+        self.plot = plot
+        self.default_toggled = not self.plot.refresh_paused
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        self.image = os.path.join(script_dir, "refresh")
+        super().__init__(*args, **kwargs)
+
+    def enable(self, event=None):
+        self.plot.refresh_paused = False
+
+    def disable(self, event=None):
+        self.plot.refresh_paused = True
+
 
 class RefreshableSpectralPlot:
     def __init__(self, initial_sd, update_interval=0.1, refresh_func=None):
@@ -27,17 +65,19 @@ class RefreshableSpectralPlot:
         self.cursor_visible = False  # Track cursor visibility state
         self.refresh_func = refresh_func
         self.refresh_paused = False
-        self.pause_button = None # to be able to change the label
 
     def start_plot(self):
         # Create initial plot in main thread
+        warnings.filterwarnings("ignore", "Treat the new Tool classes introduced in v1.5 as experimental")
+        plt.rcParams['toolbar'] = 'toolmanager'
         self.fig, self.ax = colour.plotting.plot_single_sd(self.sd, show=False)
         self._setup_cursor()
+
         plt.ion()
         plt.show(block=False)
         self.fig.canvas.draw()
 
-        self._add_pause_button()
+        self._add_toolbar_buttons()
 
         # Start background data generation
         self.running = True
@@ -68,17 +108,6 @@ class RefreshableSpectralPlot:
         finally:
             self.stop()
 
-    def _pause_refresh(self):
-        if self.refresh_paused:
-            self.refresh_paused = False
-            if self.pause_button:
-                self.pause_button.config(text="||")
-        else:
-            self.refresh_paused = True
-            if self.pause_button:
-                self.pause_button.config(text="|>")
-
-
     def _data_loop(self):
         """Background thread that generates new data"""
         while self.running:
@@ -87,7 +116,7 @@ class RefreshableSpectralPlot:
                 if self.refresh_paused:
                     continue
                 new_data = self.refresh_func() if self.refresh_func else None
-                if new_data is not None:
+                if new_data is not None and not self.refresh_paused:
                     self.update_queue.put(new_data)
             except Exception:
                 # If we can't get new data, just continue
@@ -112,24 +141,14 @@ class RefreshableSpectralPlot:
             if self.running:  # Only print if we're not shutting down
                 print(f"Plot update error: {e}")
 
-    def _add_pause_button(self):
-        if self.fig and hasattr(self.fig.canvas, 'toolbar') and self.fig.canvas.toolbar:
-            try:
-                toolbar = self.fig.canvas.toolbar
-                if hasattr(toolbar, 'master'):  # Tkinter backend
-                    import tkinter as tk
-                    # Add separator
-                    separator = tk.Frame(toolbar, width=2, bd=1, relief=tk.SUNKEN)
-                    separator.pack(side=tk.LEFT, fill=tk.Y, padx=5, pady=2)
+    def _add_toolbar_buttons(self):
+        if self.fig and hasattr(self.fig.canvas, 'manager') and self.fig.canvas.manager.toolmanager:
+                tm = self.fig.canvas.manager.toolmanager
+                tm.add_tool("pause", PauseTool, plot=self)
+                tm.add_tool("power", PowerTool, plot=self)
 
-                    label = "|>" if self.refresh_paused else "||"
-                    self.pause_button = tk.Button(toolbar, text=label, command=self._pause_refresh)
-                    self.pause_button.pack(side=tk.LEFT, padx=2)
-
-            except Exception as e:
-                # Ignore toolbar setup errors
-                if self.running:
-                    print(f"Toolbar setup error: {e}")
+                self.fig.canvas.manager.toolbar.add_tool(tm.get_tool("pause"), "refresh")
+                self.fig.canvas.manager.toolbar.add_tool(tm.get_tool("power"), "power")
 
     def _setup_cursor(self):
         """Setup cursor tracking"""
@@ -312,12 +331,12 @@ if __name__ == "__main__":
             else:
                 print("Exposure status not normal: " + str(response["exposure_status"]))
 
-        print("Stopping...")
         send_message(MessageType.STOP)
 
         while read_message()["message_type"] != MessageType.STOP:
             pass
 
+        print("...done")
         return colour.SpectralDistribution(
             {
                 start_wavelength + index: value
