@@ -20,7 +20,7 @@ A tool for modifying the official Flameeye Android app to unlock additional feat
 
 ## Interface
 
-A Python implementation of the serial protocol used by Torch Bearer's basic spectrometers, including decoding the obfuscated spectral data.
+A Python implementation of the serial protocol used by Torch Bearer's basic spectrometers, including decoding the obfuscated spectral data. This serves as a minimal example. For a more comprehensive tool with significantly more features, consider using [tobes-ui](https://github.com/wejn/tobes-ui).
 
 ### Requirements
 
